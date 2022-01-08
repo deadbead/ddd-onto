@@ -4,9 +4,9 @@ import { DateTimeImmutable } from "../../../../Shared/Domain/Type/DateTimeImmuta
 import { UniqueUsernameSpecificationInterface } from "./UniqueUsernameSpecificationInterface";
 
 export class User extends Aggregate {
-  public DEFAULT_USER_ROLE = "ROLE_USER";
-  public MAX_USER_NAME_LENGTH = 180;
-  public MAX_PASSWORD_LENGTH = 255;
+  public static DEFAULT_USER_ROLE = "ROLE_USER";
+  public static MAX_USER_NAME_LENGTH = 180;
+  public static MAX_PASSWORD_LENGTH = 255;
 
   /**
    * @ORM\Id()
@@ -52,7 +52,7 @@ export class User extends Aggregate {
     super();
 
     if (typeof roles === "undefined") {
-      roles = new Set([this.DEFAULT_USER_ROLE]);
+      roles = new Set([User.DEFAULT_USER_ROLE]);
     }
     console.log("uniqueUsernameSpecification=", uniqueUsernameSpecification);
     if (!uniqueUsernameSpecification.isSatisfiedBy(username)) {
@@ -118,8 +118,8 @@ export class User extends Aggregate {
   }
 
   private setRoles(roles: Set<string>): void {
-    if (!roles.has(this.DEFAULT_USER_ROLE)) {
-      roles.add(this.DEFAULT_USER_ROLE);
+    if (!roles.has(User.DEFAULT_USER_ROLE)) {
+      roles.add(User.DEFAULT_USER_ROLE);
     }
 
     this.roles = roles;

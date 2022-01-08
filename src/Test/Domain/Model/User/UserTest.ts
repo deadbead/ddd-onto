@@ -1,49 +1,65 @@
 import { User } from "../../../../Core/Domain/Model/User/User";
 import { UniqueUsernameSpecificationInterface } from "../../../../Core/Domain/Model/User/UniqueUsernameSpecificationInterface";
 import { TestCase } from "../../../Infrastructure/TestCase";
+import { anyString, instance, mock, when } from "ts-mockito";
 
 export class UserTest extends TestCase {
-  public test_it_return_false_when_users_are_not_equals(): void {
-    const userOne = new User(
-      "admin",
-      "some_hash",
-      this.getUniqueUsernameSpecification()
-    );
-    const userTwo = new User(
-      "admin",
-      "some_hash",
-      this.getUniqueUsernameSpecification()
-    );
-    const userThree = new User(
-      "admin",
-      "some_hash",
-      this.getUniqueUsernameSpecification()
-    );
+  run() {
+    describe("Domain Model User Test", () => {
+      it("throws exception when password to long", () => {
+        //$this->expectException(InvalidInputDataException::class);
+        //$this->expectDeprecationMessageMatches('/Password should contain at most/');
 
-    this.setUserId(userOne, 1);
-    this.setUserId(userTwo, 2);
-    this.setUserId(userThree, 1);
+        new User(
+          "admin",
+          "x".repeat(User.MAX_PASSWORD_LENGTH + 1),
+          this.getUniqueUsernameSpecification()
+        );
+      });
 
-    this.assertFalse(userOne.equals(userTwo));
-    this.assertTrue(userOne.equals(userThree));
+      it("return false when users are not equals", () => {
+        const userOne = new User(
+          "admin",
+          "some_hash",
+          this.getUniqueUsernameSpecification()
+        );
+        const userTwo = new User(
+          "admin",
+          "some_hash",
+          this.getUniqueUsernameSpecification()
+        );
+        const userThree = new User(
+          "admin",
+          "some_hash",
+          this.getUniqueUsernameSpecification()
+        );
+
+        this.setUserId(userOne, 1);
+        this.setUserId(userTwo, 2);
+        this.setUserId(userThree, 1);
+
+        this.assertFalse(
+          userOne.equals(userTwo),
+          "Equals records is not equal"
+        );
+        this.assertTrue(
+          userOne.equals(userThree),
+          "Not equals records is equal"
+        );
+      });
+    });
   }
 
   private getUniqueUsernameSpecification(): UniqueUsernameSpecificationInterface {
-    const specification: UniqueUsernameSpecificationInterface = this.createMock<
-      UniqueUsernameSpecificationInterface
-    >();
+    const mockedSpecification = mock<UniqueUsernameSpecificationInterface>();
+    const mockInstance = instance(mockedSpecification);
 
-    when(specification.isSatisfiedBy("")).thenReturn(true);
-    //specification.method("isSatisfiedBy").willReturn(true);
+    this.addRule(mockInstance.isSatisfiedBy(anyString())).thenReturn(true);
 
-    return specification;
+    return mockInstance;
   }
 
   private setUserId(user: User, id: number | string): void {
-    //$reflection = new \ReflectionClass($user);
-    //$property = $reflection->getProperty('id');
-    //$property->setAccessible(true);
-    //$property->setValue($user, $id);
     user.id = id;
   }
 }
