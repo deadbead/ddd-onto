@@ -1,6 +1,5 @@
 import "./styles.css";
 import * as Domain from "./Core/Domain/Model";
-import "./Test";
 
 document.getElementById("vanilla-ts").innerHTML = `
 <h1>Hello Vanilla!</h1>
